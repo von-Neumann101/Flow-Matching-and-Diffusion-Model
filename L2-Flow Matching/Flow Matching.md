@@ -91,20 +91,15 @@ u_t^\theta(x)-u_t(x\mid z)
 \right\|^2
 \right]\qquad z\sim p_{data},\ x\sim p_t(\cdot\mid z),\ t为0到1之间的随机数
 $$
-他们满足：
+我们令
 $$
-L_{\mathrm{CFM}}(\theta)+C=L_{\mathrm{FM}}(\theta)，其中C为和\theta无关的常数
-$$
-其中
-$$
-u_t(x)
+Y=u_t(x\mid Z),
+\qquad
+m=u_t(x)
 =
-\mathbb{E}
-\left[
-u_t(x\mid Z)\mid X_t=x
-\right].
+\mathbb{E}[Y\mid t,x].
 $$
-于是
+则
 $$
 \begin{aligned}
 L_{\mathrm{CFM}}(\theta)
@@ -112,7 +107,7 @@ L_{\mathrm{CFM}}(\theta)
 \mathbb{E}
 \left[
 \left\|
-u_t^\theta(x)-u_t(x\mid z)
+u_t^\theta(x)-Y
 \right\|^2
 \right]
 \\
@@ -120,9 +115,7 @@ u_t^\theta(x)-u_t(x\mid z)
 \mathbb{E}
 \left[
 \left\|
-u_t^\theta(x)-u_t(x)
-+
-u_t(x)-u_t(x\mid z)
+u_t^\theta(x)-m+m-Y
 \right\|^2
 \right]
 \\
@@ -130,27 +123,26 @@ u_t(x)-u_t(x\mid z)
 \mathbb{E}
 \left[
 \left\|
-u_t^\theta(x)-u_t(x)
+u_t^\theta(x)-m
 \right\|^2
 \right]
 +
 \mathbb{E}
 \left[
 \left\|
-u_t(x)-u_t(x\mid z)
+m-Y
 \right\|^2
 \right]
 \\
-&\quad
-+
+&\quad+
 2\mathbb{E}
 \left[
 \left(
-u_t^\theta(x)-u_t(x)
+u_t^\theta(x)-m
 \right)
 \cdot
 \left(
-u_t(x)-u_t(x\mid z)
+m-Y
 \right)
 \right].
 \end{aligned}
@@ -161,11 +153,11 @@ $$
 &\mathbb{E}
 \left[
 \left(
-u_t^\theta(x)-u_t(x)
+u_t^\theta(x)-m
 \right)
 \cdot
 \left(
-u_t(x)-u_t(x\mid z)
+m-Y
 \right)
 \right]
 \\
@@ -173,12 +165,12 @@ u_t(x)-u_t(x\mid z)
 \mathbb{E}_{t,x}
 \left[
 \left(
-u_t^\theta(x)-u_t(x)
+u_t^\theta(x)-m
 \right)
 \cdot
 \mathbb{E}
 \left[
-u_t(x)-u_t(x\mid Z)
+m-Y
 \mid t,x
 \right]
 \right]
@@ -187,7 +179,7 @@ u_t(x)-u_t(x\mid Z)
 \mathbb{E}_{t,x}
 \left[
 \left(
-u_t^\theta(x)-u_t(x)
+u_t^\theta(x)-m
 \right)
 \cdot
 0
@@ -197,6 +189,24 @@ u_t^\theta(x)-u_t(x)
 \end{aligned}
 $$
 因此
+$$
+L_{\mathrm{CFM}}(\theta)
+=
+\mathbb{E}
+\left[
+\left\|
+u_t^\theta(x)-u_t(x)
+\right\|^2
+\right]
++
+\mathbb{E}
+\left[
+\left\|
+u_t(x)-u_t(x\mid z)
+\right\|^2
+\right].
+$$
+也就是
 $$
 L_{\mathrm{CFM}}(\theta)
 =
@@ -211,8 +221,9 @@ u_t(x)-u_t(x\mid z)
 $$
 令
 $$
-C'
+C
 =
+-
 \mathbb{E}
 \left[
 \left\|
@@ -222,8 +233,15 @@ u_t(x)-u_t(x\mid z)
 $$
 则
 $$
-L_{\mathrm{CFM}}(\theta)
+L_{\mathrm{CFM}}(\theta)+C
 =
-L_{\mathrm{FM}}(\theta)+C',
+L_{\mathrm{FM}}(\theta).
 $$
-其中 $C'$与 $\theta$ 无关。
+这是一个非常有用的性质，或者说，**我们进行了一些计算，使得一个不可计算的式子在我们指定的了条件概率路径以后变为了可计算的式子**
+总结一下，我们不仅让这个式子可以计算，还使得Loss最小当且仅当$u_t^\theta=u_t^{target}$
+于是我们得到了一个完全不用ODE模拟的方法（如果不使用这个方法，我们只能用最朴素的神经网络训练方法来做：算出结果 → 和数据集目标比较 → 反向传播，也就是每次要进行一次ODE，拿输出数据点和真实数据比较，然后反向传播。同时通过LCM我训练的东西更加直接——过程，而非用ODE模拟后得到的结果反推）
+![[Pasted image 20260606100917.png]]
+之前说了，条件概率路径使用**高斯概率路径**，我们可以写出具体的式子
+![[Pasted image 20260606102908.png]]
+最简单的选择是$\alpha_t=t,\beta_t=1-t$，相当于是在最终的数据分布和初始的高斯分布之间做线性插值
+![[Pasted image 20260606104103.png|370]]
