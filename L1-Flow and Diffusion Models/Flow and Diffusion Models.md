@@ -83,7 +83,7 @@ $$
 $$
 现在给出SDE：
  $$
- X_0=x_0,\qquad X_t=\underbrace{du_t(X_t)dt}_{\mathrm{ODE}}+\underbrace{\sigma_tdW_t}_{\mathrm{Brownian\ motion}}
+ X_0=x_0,\qquad dX_t=\underbrace{u_t(X_t)dt}_{\mathrm{ODE}}+\underbrace{\sigma_tdW_t}_{\mathrm{Brownian\ motion}}
 $$
 **Brownian motion（布朗运动）**：是一个随机过程——$W_t\in \mathbb{R}^d$
 1. $W_0=0$
