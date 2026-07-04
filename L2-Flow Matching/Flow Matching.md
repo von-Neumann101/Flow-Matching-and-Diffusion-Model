@@ -1,22 +1,25 @@
+
 本节的目标是**训练**Flow Model——确定一个好的参数$\theta$，以使得输出的分布尽可能服从$p_{data}$
+我们的信息量——数据$x_1,x_2,\ldots,x_N\sim p_{data}$，除此以外我们对这个分布一无所知
 ![[Pasted image 20260605145547.png|594]]
-我们只知道数据$x_1,x_2,\ldots,x_N\sim p_{data}$，除此以外我们对这个分布一无所知
 # Probability Paths
+注意这里和Flow暂时没有关系，这里只是背景介绍
 ![[Pasted image 20260605144410.png]]
 $x$是一个向量（数据点）
 Dirac Distribution：$x\sim\delta_z\Longleftrightarrow x=z$（没有随机，没有概率，只是把等式当成一个分布）
 ## Conditional Probability Paths
-**条件概率路径**：一个关于$x$和$z$的函数$p_t(x\mid z)\qquad 0\le t\le 1,\ x,z\in\mathbb{R}^d$，满足如下条件：
-- 给定$z$的条件概率路径是一个概率分布
+**条件概率路径**：一个关于$x$和$z$的函数$p_t(x\mid z)\quad 0\le t\le 1,\ x,z\in\mathbb{R}^d$，满足如下条件：
+- 给定$t,z$的条件概率路径是一个概率分布
 - $p_0(\cdot\mid z)=\underbrace{p_{init}}_{与数据点z无关}$，且$p_1(\cdot\mid z)=\delta_z$
+
  ![[Pasted image 20260605151141.png|524]]
-条件路径就是把一个分布坍缩为一个点（给定的$z$）
-Example——Gaussian prob path
+条件概率路径把初始噪声分布逐渐变成以 $z$ 为中心、方差逐渐减小的分布（给定的$z$的狄拉克分布）
 - Noise schedulers：随时间变化的系数$\alpha_t,\beta_t\in\mathbb{R}，满足\alpha_0=\beta_1=0,\ \alpha_1=\beta_0=1$
+
 我们将**高斯概率路径**（常用）定义为$p_t(\cdot\mid z)=\mathcal{N}(\alpha_tz,\beta_t^2 I_d)$
 >Proof.
 >给定一个z，这是一个高斯分布（是一个概率分布）
->t=0的时候是标准高斯分布，t=1的时候是$\mathcal{N}(z,0)=\delta_z$
+>t=0的时候是标准高斯分布，t=1的时候是$\mathcal{N}(z,0)=\delta_z$（均值为$z$，方差为0的正态分布）
 ## Marginal Probability Paths
 不是针对单个数据点——我们让数据点$z$变为随机的，不再关心$z$
 **边缘化(marginalization)：全概率公式的连续版本**
@@ -28,6 +31,7 @@ $$
 p_t(x)=\int p_t(x\mid z)p_{data}(z)dz
 $$
 对于每个数据点$z\sim p_{data}$，按照概率收束世界线为一条
+![[Pasted image 20260704222937.png]]
 ## 对比
 ![[Pasted image 20260605155021.png]]
 所以，probability path 描述的是“分布如何连续地从一个形态变成另一个形态”（Noise->Data）
@@ -37,7 +41,6 @@ $$
 $$
 X_0\sim p_{init},\ dX_t=u_t^{target}(X_t\mid z)dt\Longrightarrow X_t\sim p_t(\cdot\mid z)
 $$
-![[Pasted image 20260605160222.png|275]]![[Pasted image 20260605160344.png|309]]
 最终坍缩为一个点（条件概率路径）
 目前我们在做的事情——如何从一个高斯噪声分布变为一个**已知数据点**
 ## Marginal Vector Field
@@ -49,13 +52,15 @@ $$
 那么他有如下的**重要性质**
 $$
 X_0\sim p_{init},\ dX_t=u_t^{target}(X_t)dt\Longrightarrow X_t\sim p_t(x)，特别地：X_1\sim p_{data}
-$$一样的，这里是从初始分布沿着边缘概率路径到数据分布
-Marginal Vector Field 的作用就是定义一个 ODE，把初始分布$p_{\text{init}}$推到数据分布 $p_{\text{data}}$——这正是我们要学习的
+$$
+一样的，这里是从初始分布沿着**边缘概率路径**到数据分布
+Marginal Vector Field 的作用就是定义一个 ODE，把初始分布$p_{\text{init}}$推到数据分布 $p_{\text{data}}$——这正是我们要学习的（下图中的箭头）
+![[vector_field_and_samples_moons.gif]]
 ### Continuity Equation
 证明：Marginal Vector Field使得$p_{\text{init}}$变为$p_{\text{data}}$
 给定了一个ODE，有等价关系
 $$
-X_t\sim p_t\Longleftrightarrow\frac{d}{dt}p_t(x)=-\mathrm{div}(p_tu_t)(x)
+X_t\sim p_t\Longleftrightarrow\underbrace{\frac{d}{dt}p_t(x)=-\mathrm{div}(p_tu_t)(x)}_{\text{Continuity Equation}}
 $$
 在MVF的演变下，每个时刻$X_t\sim p_t$，当且仅当**Continuity Equation**成立，接下来只需要证明该微分方程成立即可：
 积分算子，微分算子，nabla算子此处可交换
@@ -237,7 +242,8 @@ L_{\mathrm{CFM}}(\theta)+C
 =
 L_{\mathrm{FM}}(\theta).
 $$
-这是一个非常有用的性质，或者说，**我们进行了一些计算，使得一个不可计算的式子在我们指定的了条件概率路径以后变为了可计算的式子**
+这是一个非常有用的性质，或者说，**我们进行了一些计算，使得一个不可计算的式子在我们指定的了条件概率路径以后变为了可计算的式子**（我们一般**取**条件概率路径为**高斯概率路径**）
+
 总结一下，我们不仅让这个式子可以计算，还使得Loss最小当且仅当$u_t^\theta=u_t^{target}$
 于是我们得到了一个完全不用ODE模拟的方法（如果不使用这个方法，我们只能用最朴素的神经网络训练方法来做：算出结果 → 和数据集目标比较 → 反向传播，也就是每次要进行一次ODE，拿输出数据点和真实数据比较，然后反向传播。同时通过LCM我训练的东西更加直接——过程，而非用ODE模拟后得到的结果反推）
 ![[Pasted image 20260606100917.png]]
