@@ -57,9 +57,6 @@ def flow(x0):
 Flow 可以看成一个**输入初始位置、输出运动轨迹函数**的高阶函数（这里指的是Python的高阶函数）
 固定 $x _ { 0 }$—— $t \mapsto \psi _ { t } ( x _ { 0 } )$ 是一条trajectory
 固定 $t$——$x _ { 0 } \mapsto \psi _ { t } ( x _ { 0 } )$ 是一个 flow map
-下图就是一个Flow例子，固定一个t，x0为变量（Flow Map）
-![[Pasted image 20260604165056.png|332]]![[Pasted image 20260604165025.png|227]]
-
 ![[Pasted image 20260604170000.png]]
 显然，现实中我们几乎不能得到一个解析解，我们通常用数值解
 ![[Pasted image 20260604170226.png|530]]
@@ -72,7 +69,7 @@ Flow Model：使用ODE，使得 $p_{init}\to p_{data}$
 - ODE：$\dot X_t=u_t^{\theta}(X_t)$
 
 目标：使得终点$X_1\sim p_{data}$
-![[Pasted image 20260604171302.png|410]]![[Pasted image 20260604171346.png|218]]![[Pasted image 20260604171356.png|293]]
+![[Pasted image 20260704223716.png|496]]
 ## Diffusion Model
 将Flow Model推演到Diffusion Model，我们使用的数学工具从ODE变为了SDE(Stochastic Differential Equations)
 还是从之前描述常微分方程的两个东西来推广
