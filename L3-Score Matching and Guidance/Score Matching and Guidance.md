@@ -1,5 +1,5 @@
 # Score Matching
-Flow Model的另外一种训练方法
+Flow Model的另外一种训练方法（两者等价，但是Score后面会涉及到，所以这里会讲到）
 ![[Pasted image 20260606150539.png|607]]
 **Conditional Score**：$\nabla_x\log p_t(x\mid z)$
 **Marginal Score**：$\nabla_x\log p_t(x)$
@@ -8,7 +8,7 @@ $$
 \nabla_x \log p_t(x)=\int\nabla_x\log p_t(x\mid z)\frac{p_t(x\mid z)p_{data}(z)}{p_t(x)}dz
 $$
 早期的Diffusion Model学习Score Function
-这是由于Score Function只是Vector Field的重参数化。也就是说SF和VF是等价的
+这是由于Score Function只是Vector Field的重参数化。也就是说SF和VF是**等价**的
 $$
 \begin{align*}
 &u _ { t } ^ { \mathrm { t a r g e t } } ( x | z ) = a _ { t } \nabla \operatorname { l o g } p _ { t } ( x | z ) + b _ { t } x\\
@@ -27,7 +27,7 @@ $$
 我们已知$X_0\sim p_{init},\ dX_t=u_t^{target}(X_t)dt\Longrightarrow X_t\sim p_t$
 定理：（$\sigma_t\ge 0$是任意的）
 $$X_0\sim p_{init},\ dX_t=[u_t^{target}(X_t)+\underbrace{\frac{\sigma_t^2}{2}\nabla\log p_t(X_t)}_{梯度场修正噪声}]dt+\sigma_tdW_t\Longrightarrow X_t\sim p_t$$
-注意，这里对于任意一个扩散系数，其动力学都是一样的
+注意，这里对于任意一个扩散系数，其**边缘分布$p_t$都是一样的，只是轨迹不同**（不改变结果）
 **Fokker-Planck equation**
 给定$X_0\sim p_{init},\ dX_t=\underbrace{[u_t^{target}(X_t)+\frac{\sigma_t^2}{2}\nabla\log p_t(X_t)]}_{u_t}dt+\sigma_tdW_t$，有以下恒等关系
 $$
@@ -45,7 +45,8 @@ $$
 &=-\mathrm{div}(p_t[u_t^{target}+\frac{\sigma_t^2}{2}\nabla \log p_t])+\frac{\sigma_t^2}{2}\Delta p_t(x)
 \end{align*}
 $$
-实际上ODE几乎就是最优，而且理论上，sigma不会改变模型的效果。但是实际上存在一个极大值点（到达该点需要用SDE）
+实际上ODE就是理论最优，而且理论上，sigma不会改变模型的效果。但是**实际上**存在一个极大值点（到达该点需要用SDE）
+然而我们只是**估计**一个向量场，实际运行的时候，ODE 轨迹可能走偏。一旦走偏，**确定性** ODE 会继续沿着错误方向走，没有自动修正机制
 
 题外话（模拟分子）
 ![[Pasted image 20260607101403.png|333]]
@@ -88,6 +89,8 @@ $p_t(y\mid x)$的含义是——给定图片$x$，符合他的$y$的概率有多
 $$
 \tilde{u}_t^w(x\mid y)=u_t^{target}(x)+wa_t\nabla_x\log p_t(y\mid x)=u_t^{target}(x)+w(u_t^{target}(x\mid y)-u_t^{target}(x))
 $$
+这里所谓的提示词增强可以理解为是为了加强提示词的作用，但笔者认为更重要的是可以**进行上面的变形**
+
 这里的变形很重要， 这决定了是否为**Classifier-Free**，如果使用前者，我们需要训练一个Classifier（不能用现成的，因为没有现成的分类器能把噪声图片推到符合提示词的地方），这增加了工作量。不过还不够——显然$u_t(x\mid y)$和$u_t(x)$不是一个东西，用不了一个神经网络，我们再做一个非常简单的变换
 $$
 \tilde{u}_t^w(x\mid y)=wu_t^{\theta}(x\mid y)+(1-w)u_t^{\theta}(x\mid \emptyset)
@@ -100,7 +103,7 @@ $$
 ![[Pasted image 20260608090831.png|582]]
 
 ![[Pasted image 20260608091007.png|585]]
-**注意到这里CFG需要调用两次神经网络——一次无提示词，一次有提示词**
+**注意到这里CFG对于同一个样本，需要调用两次神经网络——一次无提示词，一次有提示词**
 
 **CFG**（尤其是在$w>1$的时候）不再拟合一个所谓的$p_{data}(x\mid y)$了，它在拟合一个人类的**经验数据**（来源于我们放大了Prompt的作用）——不是从严格的概率建模原则自然推出的最优方法，而是一个**实际效果很好**的技巧
 ![[Pasted image 20260608092100.png]]
