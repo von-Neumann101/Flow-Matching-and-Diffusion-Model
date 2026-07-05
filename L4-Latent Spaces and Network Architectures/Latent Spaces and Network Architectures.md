@@ -1,5 +1,5 @@
 # Latent Spaces
-将数据转化到潜空间，使得其被高效建模
+这一章没有理论的价值，完全是工程上的技巧——将数据转化到**潜空间**，使得其被高效建模
 ## 问题
 对于一个1080x720的彩色图像，需要一个1080x720x3的一个非常高维的向量来表示
 - GPU显存不够
@@ -73,7 +73,7 @@ $$
 这下就可以反向传播了
 ![[Pasted image 20260609093143.png|680]]
 ![[Pasted image 20260609095706.png]]
-**总结一下，Latent Space只是一个小trick，他并不是用于解决理论上的什么东西，而是用于解决因为图片过大模型训练、输出的成本高的问题。整个Latent Diffusion/Flow Model都在Latent Space上运行——他们输入的图片由Encoder变为Latent，他们输出的图片由Decoder变为真实图片。**
+**总结一下，Latent Space只是一个小trick，他不是用于解决理论上的什么东西，而是用于解决因为图片过大模型训练、输出的成本高的问题。整个Latent Diffusion/Flow Model都在Latent Space上运行——他们输入的图片由Encoder变为Latent，他们输出的图片由Decoder变为真实图片。**
 # Neural Network Architectures
 $$u_t^\theta(x\mid y)$$
 我们如何在实际上做到这一点？
