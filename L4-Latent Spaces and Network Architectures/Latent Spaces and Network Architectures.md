@@ -10,8 +10,8 @@
 ![[Pasted image 20260609081806.png]]
 **Latent Space**：$z\in\mathbb{R}^k$（这是一个低维空间），接下来我们用$x$表示高维数据空间的数据点
 **Encoder**：$\mu_\phi:\mathbb{R}^d\to\mathbb{R}^k$表示一个神经网络
-**Decoder**：$\mu_\theta:\mathbb{R}^k\to\mathbb{R}^d$
-**Reconstruction Loss**：字面意思，看经过这么一趟转换是否保持不变
+**Decoder**：$\mu_\theta:\mathbb{R}^k\to\mathbb{R}^d$表示一个神经网络
+**Reconstruction Loss**：字面意思，看经过这么一趟转换（encode-decode）的图片是否保持不变
 $$
 L_{R}(\theta,\phi)=\mathbb{E}_{x\sim p_{data}}[||\mu_\phi(\mu_\theta(x))-x||^2]
 $$
@@ -27,7 +27,7 @@ $$
 $$
 L_{R}(\theta,\phi)=\mathbb{E}_{x\sim p_{data},\ z\sim q_\phi(x)}[-\log p_\theta(x\mid z)]=\mathbb{E}_{x\sim p_{data},\ z\sim q_\phi(x)}[\frac{1}{2\sigma^2}||x-\mu_\theta(z)||^2]
 $$
-我们要利用这个方法，使得Latent Space近似高斯分布——这是因为Flow Model 的**起点是高斯噪声**所以Autoencoder 的 latent target 也最好被规整到一个接近高斯、连续、无太多空洞的空间里。这样 Flow 从高斯噪声生成 latent 时，任务会更稳定。
+我们要利用这个方法，使得Latent Space近似高斯分布——这是因为Flow Model 的**起点是高斯噪声**所以Autoencoder 的 latent target 也最好被规整到一个接近高斯、连续、无太多空洞的空间里。这样 Flow 从高斯噪声生成 latent 时，任务会更稳定。（启发性方法）
 **KL散度**（衡量两个分布的距离）：
 $$
 D _ { \mathrm { K L } } ( q ( x ) \parallel p ( x ) ) = \int q ( x ) \operatorname { l o g } { \frac { q ( x ) } { p ( x ) } } = \mathbb { E } _ { X \sim q } \left[ \operatorname { l o g } { \frac { q ( X ) } { p ( X ) } } \right].
