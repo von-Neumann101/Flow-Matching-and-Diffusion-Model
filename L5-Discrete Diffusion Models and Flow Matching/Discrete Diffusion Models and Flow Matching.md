@@ -92,3 +92,4 @@ $$\mathcal L_{\text{DFM}}(\theta)=\mathbb E_{z\sim p_{data},t\sim\text{Unif}_{[0
 这里5~9行是4行的具体步骤
 # 优点与缺点
 ![[Pasted image 20260707103219.png]]
+#CTMC #Markov #文本生成 #离散扩散模型 #Diffusion-Model

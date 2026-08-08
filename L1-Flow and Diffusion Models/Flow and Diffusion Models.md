@@ -110,3 +110,4 @@ Diffusion Model：和Flow Model的目的一样，只不过多了随机过程
 # 总结
 ![[Pasted image 20260605140303.png]]
 最终我们输出的是一个分布$X_1$
+#SDE #ODE #Flow #Flow-Matching #Diffusion-Model

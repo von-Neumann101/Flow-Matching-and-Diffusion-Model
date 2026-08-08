@@ -1,4 +1,3 @@
-
 本节的目标是**训练**Flow Model——确定一个好的参数$\theta$，以使得输出的分布尽可能服从$p_{data}$
 我们的信息量——数据$x_1,x_2,\ldots,x_N\sim p_{data}$，除此以外我们对这个分布一无所知
 ![[Pasted image 20260605145547.png|594]]
@@ -251,3 +250,4 @@ $$
 ![[Pasted image 20260606102908.png]]
 最简单的选择是$\alpha_t=t,\beta_t=1-t$，相当于是在最终的数据分布和初始的高斯分布之间做线性插值
 ![[Pasted image 20260606104103.png|370]]
+#概率路径 #Flow-Matching #向量场 #ODE
